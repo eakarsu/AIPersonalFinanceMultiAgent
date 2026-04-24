@@ -1,0 +1,3 @@
+const pool=require('../models/db');
+class categorizerAgent{constructor(){this.name='categorizerAgent'}async log(action,status,message,ms){await pool.query('INSERT INTO finance_logs(agent,action,status,message,duration_ms) VALUES($1,$2,$3,$4,$5)',[this.name,action,status,message,ms])}async execute(data){const s=Date.now();try{await this.log('execute','info','Started',0);const d=Date.now()-s;await this.log('complete','success','Done',d);return{success:true,duration:d}}catch(e){await this.log('error','error',e.message,Date.now()-s);return{success:false,error:e.message}}}}
+module.exports=new categorizerAgent();

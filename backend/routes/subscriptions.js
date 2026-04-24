@@ -1,0 +1,6 @@
+const express=require('express'),pool=require('../models/db'),auth=require('../middleware/auth'),r=express.Router();
+r.get('/',auth,async(q,s)=>{try{s.json((await pool.query('SELECT s.*,a.name as account_name FROM subscriptions s LEFT JOIN accounts a ON s.account_id=a.id ORDER BY s.amount DESC')).rows)}catch(e){s.status(500).json({error:e.message})}});
+r.post('/',auth,async(q,s)=>{try{const{account_id,service_name,amount,frequency,category}=q.body;const nd=new Date();nd.setDate(nd.getDate()+30);const r=await pool.query('INSERT INTO subscriptions(account_id,service_name,amount,frequency,next_charge,category) VALUES($1,$2,$3,$4,$5,$6) RETURNING *',[account_id,service_name,amount,frequency||'monthly',nd.toISOString().split('T')[0],category]);s.status(201).json(r.rows[0])}catch(e){s.status(500).json({error:e.message})}});
+r.put('/:id/cancel',auth,async(q,s)=>{try{const r=await pool.query("UPDATE subscriptions SET status='cancelled' WHERE id=$1 RETURNING *",[q.params.id]);s.json(r.rows[0])}catch(e){s.status(500).json({error:e.message})}});
+r.delete('/:id',auth,async(q,s)=>{try{await pool.query('DELETE FROM subscriptions WHERE id=$1',[q.params.id]);s.json({message:'Deleted'})}catch(e){s.status(500).json({error:e.message})}});
+module.exports=r;
