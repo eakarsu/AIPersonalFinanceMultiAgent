@@ -1,6 +1,6 @@
 import React,{useState,useEffect}from'react';import api from'../services/api';import Modal from'../components/Modal';import DetailPanel from'../components/DetailPanel';
 export default function AccountsPage(){const[items,setItems]=useState([]),[sel,setSel]=useState(null),[modal,setModal]=useState(false),[form,setForm]=useState({name:'',institution:'',account_type:'checking',balance:0});
-useEffect(()=>{load()},[]);const load=()=>api.getAccounts().then(setItems);
+useEffect(()=>{load()},[]);const load=()=>api.getAccounts().then(res=>{setItems(Array.isArray(res)?res:(res.data||[]))});
 const submit=async e=>{e.preventDefault();await api.createAccount(form);setModal(false);load()};
 const del=async()=>{if(window.confirm('Delete?')){await api.deleteAccount(sel.id);setSel(null);load()}};
 const fmt=n=>Number(n)>=0?`$${Number(n).toLocaleString('en',{minimumFractionDigits:2})}`:`-$${Math.abs(Number(n)).toLocaleString('en',{minimumFractionDigits:2})}`;

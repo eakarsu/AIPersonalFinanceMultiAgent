@@ -1,7 +1,16 @@
 const express=require('express'),pool=require('../models/db'),auth=require('../middleware/auth'),r=express.Router();
-r.get('/',auth,async(q,s)=>{try{s.json((await pool.query('SELECT * FROM accounts ORDER BY created_at DESC')).rows)}catch(e){s.status(500).json({error:e.message})}});
-r.get('/:id',auth,async(q,s)=>{try{const r=await pool.query('SELECT * FROM accounts WHERE id=$1',[q.params.id]);r.rows.length?s.json(r.rows[0]):s.status(404).json({error:'Not found'})}catch(e){s.status(500).json({error:e.message})}});
-r.post('/',auth,async(q,s)=>{try{const{name,institution,account_type,balance,account_number}=q.body;const r=await pool.query('INSERT INTO accounts(name,institution,account_type,balance,account_number,created_by) VALUES($1,$2,$3,$4,$5,$6) RETURNING *',[name,institution,account_type,balance||0,account_number,q.user.id]);s.status(201).json(r.rows[0])}catch(e){s.status(500).json({error:e.message})}});
-r.put('/:id',auth,async(q,s)=>{try{const{name,institution,account_type,balance,account_number,status}=q.body;const r=await pool.query('UPDATE accounts SET name=$1,institution=$2,account_type=$3,balance=$4,account_number=$5,status=$6,updated_at=NOW() WHERE id=$7 RETURNING *',[name,institution,account_type,balance,account_number,status,q.params.id]);s.json(r.rows[0])}catch(e){s.status(500).json({error:e.message})}});
+r.get('/',auth,async(q,s)=>{
+  try{
+    const page=Math.max(1,parseInt(q.query.page)||1);
+    const limit=Math.min(200,Math.max(1,parseInt(q.query.limit)||20));
+    const offset=(page-1)*limit;
+    const total=(await pool.query('SELECT COUNT(*) FROM accounts')).rows[0].count;
+    const rows=(await pool.query('SELECT * FROM accounts ORDER BY created_at DESC LIMIT $1 OFFSET $2',[limit,offset])).rows;
+    s.json({data:rows,total:+total,page,limit,totalPages:Math.ceil(total/limit)});
+  }catch(e){s.status(500).json({error:e.message})}
+});
+r.get('/:id',auth,async(q,s)=>{try{const res=await pool.query('SELECT * FROM accounts WHERE id=$1',[q.params.id]);res.rows.length?s.json(res.rows[0]):s.status(404).json({error:'Not found'})}catch(e){s.status(500).json({error:e.message})}});
+r.post('/',auth,async(q,s)=>{try{const{name,institution,account_type,balance,account_number}=q.body;const res=await pool.query('INSERT INTO accounts(name,institution,account_type,balance,account_number,created_by) VALUES($1,$2,$3,$4,$5,$6) RETURNING *',[name,institution,account_type,balance||0,account_number,q.user.id]);s.status(201).json(res.rows[0])}catch(e){s.status(500).json({error:e.message})}});
+r.put('/:id',auth,async(q,s)=>{try{const{name,institution,account_type,balance,account_number,status}=q.body;const res=await pool.query('UPDATE accounts SET name=$1,institution=$2,account_type=$3,balance=$4,account_number=$5,status=$6,updated_at=NOW() WHERE id=$7 RETURNING *',[name,institution,account_type,balance,account_number,status,q.params.id]);s.json(res.rows[0])}catch(e){s.status(500).json({error:e.message})}});
 r.delete('/:id',auth,async(q,s)=>{try{await pool.query('DELETE FROM accounts WHERE id=$1',[q.params.id]);s.json({message:'Deleted'})}catch(e){s.status(500).json({error:e.message})}});
 module.exports=r;
