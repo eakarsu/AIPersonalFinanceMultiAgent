@@ -19,6 +19,7 @@ import GapNoNotificationsLayerGrep0Page from './pages/GapNoNotificationsLayerGre
 import GapNoWebhooksForTransactionEventsPage from './pages/GapNoWebhooksForTransactionEventsPage';
 import GapNoMobileAppPage from './pages/GapNoMobileAppPage';
 import GapOnly7FrontendPagesPage from './pages/GapOnly7FrontendPagesPage';
+import CustomViewsPage from './pages/CustomViewsPage';
 export default function App(){const[a,setA]=useState(!!localStorage.getItem('token'));if(!a)return<LoginPage onLogin={()=>setA(true)}/>;return(<BrowserRouter><div style={{display:'flex'}}><Sidebar/><div style={{marginLeft:250,flex:1,minHeight:'100vh'}}><Routes><Route path="/dashboard" element={<DashboardPage/>}/><Route path="/accounts" element={<AccountsPage/>}/><Route path="/transactions" element={<TransactionsPage/>}/><Route path="/subscriptions" element={<SubscriptionsPage/>}/><Route path="/budgets" element={<BudgetsPage/>}/><Route path="/agents" element={<AgentsPage/>}/><Route path="*" element={<Navigate to="/dashboard"/>}/>
           {/* // === Batch 06 Gaps & Frontend Mounts === */}
           <Route path="/cf-autonomous-budget-agent" element={<CFAutonomousBudgetAgentPage />} />
@@ -40,4 +41,5 @@ export default function App(){const[a,setA]=useState(!!localStorage.getItem('tok
           <Route path="/gap-no-webhooks-for-transaction-events" element={<GapNoWebhooksForTransactionEventsPage />} />
           <Route path="/gap-no-mobile-app" element={<GapNoMobileAppPage />} />
           <Route path="/gap-only-7-frontend-pages" element={<GapOnly7FrontendPagesPage />} />
+          <Route path="/custom-views" element={<CustomViewsPage />} />
         </Routes></div></div></BrowserRouter>)}

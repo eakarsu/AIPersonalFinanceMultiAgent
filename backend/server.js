@@ -1,7 +1,7 @@
 const express=require('express'),cors=require('cors'),helmet=require('helmet');require('dotenv').config({path:'../.env'});
 const app=express();
 app.use(helmet());
-app.use(cors({origin:process.env.CLIENT_URL||'http://localhost:3000',credentials:true}));
+app.use(cors({origin:[process.env.CLIENT_URL||'http://localhost:3007','http://localhost:3000','http://localhost:3007'],credentials:true}));
 app.use(express.json({limit:'10mb'}));
 const pool=require('./models/db');
 app.use('/api/auth',require('./routes/auth'));
@@ -42,5 +42,14 @@ app.use('/api/gap-no-notifications-layer-grep-0', require('./routes/gapFeat_no_n
 app.use('/api/gap-no-webhooks-for-transaction-events', require('./routes/gapFeat_no_webhooks_for_transaction_events'));
 app.use('/api/gap-no-mobile-app', require('./routes/gapFeat_no_mobile_app'));
 app.use('/api/gap-only-7-frontend-pages', require('./routes/gapFeat_only_7_frontend_pages'));
+
+// === Money Views (custom-views) mount — MUST be before 404 ===
+app.use('/api/custom-views', require('./routes/customViews'));
+
+// Health
+app.get('/api/health',(q,s)=>s.json({status:'ok',ts:Date.now()}));
+
+// 404 catch-all (must be after all other routes)
+app.use('/api/*',(q,s)=>s.status(404).json({error:'Not found',path:q.originalUrl}));
 
 app.listen(process.env.PORT||3006,()=>console.log(`Server on port ${process.env.PORT||3006}`));

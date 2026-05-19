@@ -1,5 +1,5 @@
 import React from'react';import{useNavigate,useLocation}from'react-router-dom';
-const items=[{path:'/dashboard',label:'Dashboard',icon:'📊'},{path:'/accounts',label:'Accounts',icon:'🏦'},{path:'/transactions',label:'Transactions',icon:'💳'},{path:'/subscriptions',label:'Subscriptions',icon:'🔄'},{path:'/budgets',label:'Budgets',icon:'📈'},{path:'/agents',label:'AI Agents',icon:'🤖'},
+const items=[{path:'/dashboard',label:'Dashboard',icon:'📊'},{path:'/accounts',label:'Accounts',icon:'🏦'},{path:'/transactions',label:'Transactions',icon:'💳'},{path:'/subscriptions',label:'Subscriptions',icon:'🔄'},{path:'/budgets',label:'Budgets',icon:'📈'},{path:'/agents',label:'AI Agents',icon:'🤖'},{path:'/custom-views',label:'Money Views',icon:'💎'},
   // === Batch 06 Gaps & Frontend Mounts ===
   { path: '/cf-autonomous-budget-agent', label: 'Autonomous budget agent', icon: '✨' },
   { path: '/cf-subscription-analyzer', label: 'Subscription analyzer', icon: '✨' },
