@@ -25,6 +25,7 @@ app.use('/api/cf-subscription-analyzer', require('./routes/customFeat02_Subscrip
 app.use('/api/cf-financial-goal-orchestration', require('./routes/customFeat03_FinancialGoalOrchestration'));
 app.use('/api/cf-expense-anomaly-detection', require('./routes/customFeat04_ExpenseAnomalyDetection'));
 app.use('/api/cf-cashflow-forecasting', require('./routes/customFeat05_CashflowForecasting'));
+app.use('/api/debt-snowball-planner', require('./routes/debtSnowballPlanner'));
 
 
 // === Batch 06 Gaps & Frontend Mounts ===

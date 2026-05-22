@@ -6,6 +6,7 @@ const items=[{path:'/dashboard',label:'Dashboard',icon:'📊'},{path:'/accounts'
   { path: '/cf-financial-goal-orchestration', label: 'Financial goal orchestration', icon: '✨' },
   { path: '/cf-expense-anomaly-detection', label: 'Expense anomaly detection', icon: '✨' },
   { path: '/cf-cashflow-forecasting', label: 'Cashflow forecasting', icon: '✨' },
+  { path: '/debt-snowball-planner', label: 'Debt Snowball Planner', icon: '✨' },
   { path: '/gap-the-agents-js-route-is-unfulfilled', label: 'The `agents.js` route is unfulfilled', icon: '✨' },
   { path: '/gap-transactions-without-categorize', label: 'Transactions without `/categorize', icon: '✨' },
   { path: '/gap-budgets-without-budget', label: 'Budgets without `/budget', icon: '✨' },

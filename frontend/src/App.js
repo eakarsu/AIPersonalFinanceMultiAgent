@@ -5,6 +5,7 @@ import CFSubscriptionAnalyzerPage from './pages/CFSubscriptionAnalyzerPage';
 import CFFinancialGoalOrchestrationPage from './pages/CFFinancialGoalOrchestrationPage';
 import CFExpenseAnomalyDetectionPage from './pages/CFExpenseAnomalyDetectionPage';
 import CFCashflowForecastingPage from './pages/CFCashflowForecastingPage';
+import DebtSnowballPlannerPage from './pages/DebtSnowballPlannerPage';
 import GapTheAgentsJsRouteIsUnfulfilledPage from './pages/GapTheAgentsJsRouteIsUnfulfilledPage';
 import GapTransactionsWithoutCategorizePage from './pages/GapTransactionsWithoutCategorizePage';
 import GapBudgetsWithoutBudgetPage from './pages/GapBudgetsWithoutBudgetPage';
@@ -20,13 +21,23 @@ import GapNoWebhooksForTransactionEventsPage from './pages/GapNoWebhooksForTrans
 import GapNoMobileAppPage from './pages/GapNoMobileAppPage';
 import GapOnly7FrontendPagesPage from './pages/GapOnly7FrontendPagesPage';
 import CustomViewsPage from './pages/CustomViewsPage';
-export default function App(){const[a,setA]=useState(!!localStorage.getItem('token'));if(!a)return<LoginPage onLogin={()=>setA(true)}/>;return(<BrowserRouter><div style={{display:'flex'}}><Sidebar/><div style={{marginLeft:250,flex:1,minHeight:'100vh'}}><Routes><Route path="/dashboard" element={<DashboardPage/>}/><Route path="/accounts" element={<AccountsPage/>}/><Route path="/transactions" element={<TransactionsPage/>}/><Route path="/subscriptions" element={<SubscriptionsPage/>}/><Route path="/budgets" element={<BudgetsPage/>}/><Route path="/agents" element={<AgentsPage/>}/><Route path="*" element={<Navigate to="/dashboard"/>}/>
+import CodexCustomVizFeature from './pages/CodexCustomVizFeature';
+import CodexOperationsFeature from './pages/CodexOperationsFeature';
+
+import TimelineView from './pages/TimelineView';
+
+export default function App(){const[a,setA]=useState(!!localStorage.getItem('token'));if(!a)return<LoginPage onLogin={()=>setA(true)}/>;return(<BrowserRouter><div style={{display:'flex'}}><Sidebar/><div style={{marginLeft:250,flex:1,minHeight:'100vh'}}><Routes>
+        <Route path="/insights/timeline" element={<TimelineView />} />
+        <Route path="/codex/custom-viz" element={<CodexCustomVizFeature />} />
+        <Route path="/codex/operations" element={<CodexOperationsFeature />} />
+<Route path="/dashboard" element={<DashboardPage/>}/><Route path="/accounts" element={<AccountsPage/>}/><Route path="/transactions" element={<TransactionsPage/>}/><Route path="/subscriptions" element={<SubscriptionsPage/>}/><Route path="/budgets" element={<BudgetsPage/>}/><Route path="/agents" element={<AgentsPage/>}/><Route path="*" element={<Navigate to="/dashboard"/>}/>
           {/* // === Batch 06 Gaps & Frontend Mounts === */}
           <Route path="/cf-autonomous-budget-agent" element={<CFAutonomousBudgetAgentPage />} />
           <Route path="/cf-subscription-analyzer" element={<CFSubscriptionAnalyzerPage />} />
           <Route path="/cf-financial-goal-orchestration" element={<CFFinancialGoalOrchestrationPage />} />
           <Route path="/cf-expense-anomaly-detection" element={<CFExpenseAnomalyDetectionPage />} />
           <Route path="/cf-cashflow-forecasting" element={<CFCashflowForecastingPage />} />
+          <Route path="/debt-snowball-planner" element={<DebtSnowballPlannerPage />} />
           <Route path="/gap-the-agents-js-route-is-unfulfilled" element={<GapTheAgentsJsRouteIsUnfulfilledPage />} />
           <Route path="/gap-transactions-without-categorize" element={<GapTransactionsWithoutCategorizePage />} />
           <Route path="/gap-budgets-without-budget" element={<GapBudgetsWithoutBudgetPage />} />
