@@ -1,8 +1,10 @@
-const{Pool}=require('pg');const bcrypt=require('bcryptjs');require('dotenv').config({path:'../../.env'});
-const pool=new Pool({connectionString:process.env.DATABASE_URL||'postgresql://postgres:postgres@localhost:5432/ai_personal_finance_db'});
+const{Pool}=require('pg');const bcrypt=require('bcryptjs');require('dotenv').config({path:'../../.env'});const{databaseUrl}=require('../config/security');
+const pool=new Pool({connectionString:databaseUrl()});
 async function seed(){try{
+if(process.env.ALLOW_DESTRUCTIVE_SEED!=='true')throw new Error('set ALLOW_DESTRUCTIVE_SEED=true to run the destructive demo seed explicitly');
+const seedEmail=process.env.SEED_ADMIN_EMAIL,seedPassword=process.env.SEED_ADMIN_PASSWORD;if(!seedEmail||!seedPassword)throw new Error('SEED_ADMIN_EMAIL and SEED_ADMIN_PASSWORD are required');
 await pool.query('DELETE FROM finance_logs');await pool.query('DELETE FROM budgets');await pool.query('DELETE FROM subscriptions');await pool.query('DELETE FROM transactions');await pool.query('DELETE FROM accounts');await pool.query('DELETE FROM users');
-const h=await bcrypt.hash('admin123',10);const u=await pool.query("INSERT INTO users(email,password,name) VALUES('admin@example.com',$1,'Admin User') RETURNING id",[h]);const uid=u.rows[0].id;
+const h=await bcrypt.hash(seedPassword,10);const u=await pool.query("INSERT INTO users(email,password,name,role) VALUES($1,$2,'Admin User','account_owner') RETURNING id",[seedEmail,h]);const uid=u.rows[0].id;
 const accts=[
   {name:'Chase Checking',inst:'JPMorgan Chase',type:'checking',bal:12450.67,num:'****4521'},
   {name:'BofA Savings',inst:'Bank of America',type:'savings',bal:34780.23,num:'****8934'},

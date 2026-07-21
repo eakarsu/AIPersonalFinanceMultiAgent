@@ -4,7 +4,9 @@ app.use(helmet());
 app.use(cors({origin:[process.env.CLIENT_URL||'http://localhost:3007','http://localhost:3000','http://localhost:3007'],credentials:true}));
 app.use(express.json({limit:'10mb'}));
 const pool=require('./models/db');
+const authenticate=require('./middleware/auth');
 app.use('/api/auth',require('./routes/auth'));
+app.use('/api/finance-workflows',authenticate,require('./routes/financeWorkflow'));
 app.use('/api/accounts',require('./routes/accounts'));
 app.use('/api/transactions',require('./routes/transactions'));
 app.use('/api/subscriptions',require('./routes/subscriptions'));
@@ -15,11 +17,8 @@ app.use('/api/ext',require('./routes/extensions')); // Apply pass 5: Plaid/billp
 // GET /api/stats
 app.get('/api/stats',async(q,s)=>{try{const bal=await pool.query('SELECT COALESCE(SUM(balance),0) as total FROM accounts');const spent=await pool.query("SELECT COALESCE(SUM(amount),0) as total FROM transactions WHERE date >= date_trunc('month',CURRENT_DATE)");const subs=await pool.query("SELECT COUNT(*) as total FROM subscriptions WHERE status='active'");const savings=await pool.query("SELECT COALESCE(SUM(monthly_limit-spent),0) as total FROM budgets WHERE spent<monthly_limit");s.json({totalBalance:+bal.rows[0].total,monthlySpending:+spent.rows[0].total,subscriptions:+subs.rows[0].total,savingsPotential:+savings.rows[0].total})}catch(e){s.status(500).json({error:e.message})}});
 
-// Ensure ai_results table exists
-pool.query(`CREATE TABLE IF NOT EXISTS ai_results (id SERIAL PRIMARY KEY, user_id INTEGER, agent VARCHAR(100), result JSONB, created_at TIMESTAMP DEFAULT NOW())`).catch(()=>{});
-
-
 // === Custom Feature Mounts (batch_06) ===
+app.use(/^\/api\/(?:cf-|gap-)/,authenticate,(q,s)=>s.status(503).json({error:'Generated feature route is quarantined pending validated implementation'}));
 app.use('/api/cf-autonomous-budget-agent', require('./routes/customFeat01_AutonomousBudgetAgent'));
 app.use('/api/cf-subscription-analyzer', require('./routes/customFeat02_SubscriptionAnalyzer'));
 app.use('/api/cf-financial-goal-orchestration', require('./routes/customFeat03_FinancialGoalOrchestration'));

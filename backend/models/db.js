@@ -1,4 +1,5 @@
 const { Pool } = require('pg');
 require('dotenv').config({ path: '../.env' });
-const pool = new Pool({ connectionString: process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/ai_personal_finance_db' });
+const { databaseUrl } = require('../config/security');
+const pool = new Pool({ connectionString: databaseUrl() });
 module.exports = pool;

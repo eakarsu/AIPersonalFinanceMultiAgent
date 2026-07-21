@@ -1,0 +1,49 @@
+name: Domain validation
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  domain-validation:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Policy tests
+        run: node --test test/financePolicy.test.cjs
+      - name: Changed JavaScript syntax
+        run: |
+          node --check config/security.js
+          node --check models/db.js
+          node --check routes/auth.js
+          node --check seeds/seed.js
+          node --check middleware/auth.js
+          node --check domain/financePolicy.js
+          node --check routes/financeWorkflow.js
+          node --check server.js
+      - name: Lifecycle script syntax
+        working-directory: .
+        run: bash -n start.sh scripts/migrate.sh
+      - name: Migration safety
+        run: |
+          found=0
+          for migration in migrations/*_workflow.sql migrations/001_base_schema.sql; do
+            test -f "$migration" || continue
+            found=1
+            test "$(sed -n '1p' "$migration")" = "BEGIN;"
+            test "$(tail -n 1 "$migration")" = "COMMIT;"
+            if grep -Eiq 'DROP[[:space:]]+TABLE|TRUNCATE|DELETE[[:space:]]+FROM' "$migration"; then
+              echo "Destructive SQL found in $migration" >&2
+              exit 1
+            fi
+          done
+          test "$found" -eq 1
