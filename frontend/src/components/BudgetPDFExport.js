@@ -7,7 +7,7 @@ export default function BudgetPDFExport() {
   const download = async () => {
     setDownloading(true); setStatus('');
     try {
-      const r = await fetch('http://localhost:3006/api/custom-views/budget-pdf', {
+      const r = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:3006'}/api/custom-views/budget-pdf`, {
         headers: { Authorization: 'Bearer ' + (localStorage.getItem('token') || '') }
       });
       if (!r.ok) { setStatus('Failed: ' + r.status); setDownloading(false); return; }

@@ -25,6 +25,21 @@ async function migrate() {
         ON ai_analysis_results(user_id, endpoint, created_at DESC)
     `);
 
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS ai_results (
+        id          SERIAL PRIMARY KEY,
+        user_id     INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        agent       VARCHAR(100) NOT NULL,
+        result      JSONB NOT NULL,
+        created_at  TIMESTAMP DEFAULT NOW()
+      )
+    `);
+
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_ai_results_user_agent
+        ON ai_results(user_id, agent, created_at DESC)
+    `);
+
     // Finance forecasts — persisted by forecastAgent
     await client.query(`
       CREATE TABLE IF NOT EXISTS finance_forecasts (

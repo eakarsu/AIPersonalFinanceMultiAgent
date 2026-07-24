@@ -4,7 +4,7 @@ export default function NetWorthTrendChart() {
   const [data, setData] = useState(null);
   const [err, setErr] = useState('');
   useEffect(() => {
-    fetch('http://localhost:3006/api/custom-views/net-worth-trend', {
+    fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:3006'}/api/custom-views/net-worth-trend`, {
       headers: { Authorization: 'Bearer ' + (localStorage.getItem('token') || '') }
     })
       .then(r => r.json())

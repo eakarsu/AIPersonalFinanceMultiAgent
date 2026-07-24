@@ -1,4 +1,4 @@
-const{Pool}=require('pg');const bcrypt=require('bcryptjs');require('dotenv').config({path:'../../.env'});const{databaseUrl}=require('../config/security');
+const path=require('path');const{Pool}=require('pg');const bcrypt=require('bcryptjs');require('dotenv').config({path:path.join(__dirname,'../../.env')});const{databaseUrl}=require('../config/security');
 const pool=new Pool({connectionString:databaseUrl()});
 async function seed(){try{
 if(process.env.ALLOW_DESTRUCTIVE_SEED!=='true')throw new Error('set ALLOW_DESTRUCTIVE_SEED=true to run the destructive demo seed explicitly');

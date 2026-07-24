@@ -1,5 +1,6 @@
 const express = require('express'), bcrypt = require('bcryptjs'), jwt = require('jsonwebtoken'), pool = require('../models/db'), router = express.Router();
 const { jwtSecret } = require('../config/security');
+const authenticate = require('../middleware/auth');
 const JWT_SECRET = jwtSecret();
 router.post('/login', async (req, res) => {
   try { const { email, password } = req.body; const r = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
@@ -14,5 +15,17 @@ router.post('/register', async (req, res) => {
     const token = jwt.sign({ id: r.rows[0].id, email, name, role: r.rows[0].role }, JWT_SECRET, { expiresIn: '24h' });
     res.status(201).json({ token, user: r.rows[0] });
   } catch (err) { res.status(500).json({ error: err.message }); }
+});
+router.get('/me', authenticate, async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT id, email, name, role, created_at FROM users WHERE id = $1',
+      [req.user.id]
+    );
+    if (!result.rows.length) return res.status(404).json({ error: 'User not found' });
+    res.json({ user: result.rows[0] });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 module.exports = router;

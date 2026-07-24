@@ -52,7 +52,7 @@ cleanup() {
 }
 trap cleanup EXIT INT TERM
 
-(cd backend && npm run dev) &
+(cd backend && npm start) &
 BACKEND_PID=$!
 (cd frontend && BROWSER=none PORT="$FRONTEND_PORT" npm start) &
 FRONTEND_PID=$!

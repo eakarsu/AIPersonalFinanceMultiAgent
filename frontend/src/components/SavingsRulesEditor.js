@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-const BASE = 'http://localhost:3006/api/custom-views';
+const BASE = `${process.env.REACT_APP_API_URL || 'http://localhost:3006'}/api/custom-views`;
 
 export default function SavingsRulesEditor() {
   const [goals, setGoals] = useState([]);

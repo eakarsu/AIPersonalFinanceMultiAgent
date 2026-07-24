@@ -40,8 +40,12 @@ const aiRateLimiter = rateLimit(3_600_000, 20);
 
 // ── AI helper ────────────────────────────────────────────────────────────────
 async function callAI(prompt) {
+  if (!process.env.OPENROUTER_API_KEY) {
+    throw new Error('OPENROUTER_API_KEY is not configured');
+  }
+  const baseUrl = (process.env.OPENROUTER_BASE_URL || 'https://openrouter.ai/api/v1').replace(/\/$/, '');
   const response = await axios.post(
-    'https://openrouter.ai/api/v1/chat/completions',
+    `${baseUrl}/chat/completions`,
     {
       model: process.env.OPENROUTER_MODEL || 'anthropic/claude-3-5-sonnet-20241022',
       messages: [{ role: 'user', content: prompt }],
@@ -54,7 +58,10 @@ async function callAI(prompt) {
       },
     }
   );
-  const content = response.data.choices[0].message.content;
+  const content = response.data?.choices?.[0]?.message?.content;
+  if (typeof content !== 'string' || !content.trim()) {
+    throw new Error('OpenRouter returned an empty response');
+  }
   try {
     return JSON.parse(content);
   } catch {
