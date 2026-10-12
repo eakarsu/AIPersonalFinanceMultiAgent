@@ -1,3 +1,4 @@
+import AIReportLibrary from "./components/AIReportLibrary";
 import React,{useState}from'react';import{BrowserRouter,Routes,Route,Navigate}from'react-router-dom';import Sidebar from'./components/Sidebar';import LoginPage from'./pages/LoginPage';import DashboardPage from'./pages/DashboardPage';import AccountsPage from'./pages/AccountsPage';import TransactionsPage from'./pages/TransactionsPage';import SubscriptionsPage from'./pages/SubscriptionsPage';import BudgetsPage from'./pages/BudgetsPage';import AgentsPage from'./pages/AgentsPage';
 // // === Batch 06 Gaps & Frontend Mounts ===
 import CFAutonomousBudgetAgentPage from './pages/CFAutonomousBudgetAgentPage';
@@ -26,7 +27,7 @@ import CodexOperationsFeature from './pages/CodexOperationsFeature';
 
 import TimelineView from './pages/TimelineView';
 
-export default function App(){const[a,setA]=useState(!!localStorage.getItem('token'));if(!a)return<LoginPage onLogin={()=>setA(true)}/>;return(<BrowserRouter><div style={{display:'flex'}}><Sidebar/><div style={{marginLeft:250,flex:1,minHeight:'100vh'}}><Routes>
+export default function App(){const[a,setA]=useState(!!localStorage.getItem('token'));if(!a)return<LoginPage onLogin={()=>setA(true)}/>;return(<><AIReportLibrary floating /><BrowserRouter><div style={{display:'flex'}}><Sidebar/><div style={{marginLeft:250,flex:1,minHeight:'100vh'}}><Routes>
         <Route path="/insights/timeline" element={<TimelineView />} />
         <Route path="/codex/custom-viz" element={<CodexCustomVizFeature />} />
         <Route path="/codex/operations" element={<CodexOperationsFeature />} />
@@ -53,4 +54,4 @@ export default function App(){const[a,setA]=useState(!!localStorage.getItem('tok
           <Route path="/gap-no-mobile-app" element={<GapNoMobileAppPage />} />
           <Route path="/gap-only-7-frontend-pages" element={<GapOnly7FrontendPagesPage />} />
           <Route path="/custom-views" element={<CustomViewsPage />} />
-        </Routes></div></div></BrowserRouter>)}
+        </Routes></div></div></BrowserRouter></>)}

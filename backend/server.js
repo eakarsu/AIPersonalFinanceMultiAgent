@@ -18,6 +18,14 @@ app.use('/api/ext',require('./routes/extensions')); // Apply pass 5: Plaid/billp
 app.get('/api/stats',async(q,s)=>{try{const bal=await pool.query('SELECT COALESCE(SUM(balance),0) as total FROM accounts');const spent=await pool.query("SELECT COALESCE(SUM(amount),0) as total FROM transactions WHERE date >= date_trunc('month',CURRENT_DATE)");const subs=await pool.query("SELECT COUNT(*) as total FROM subscriptions WHERE status='active'");const savings=await pool.query("SELECT COALESCE(SUM(monthly_limit-spent),0) as total FROM budgets WHERE spent<monthly_limit");s.json({totalBalance:+bal.rows[0].total,monthlySpending:+spent.rows[0].total,subscriptions:+subs.rows[0].total,savingsPotential:+savings.rows[0].total})}catch(e){s.status(500).json({error:e.message})}});
 
 // === Custom Feature Mounts (batch_06) ===
+
+// Advisory AI reports only; native execution and approval routes stay unchanged.
+const aiWorkspaceSupport = require("./aiWorkspaceAdapters.cjs");
+const aiWorkspaceDatabase = require("./models/db.js");
+app.use('/api/report-workspace', require("./aiWorkspace.cjs").createAIWorkspaceRouter({
+  pool: aiWorkspaceDatabase, authenticateToken: require("./middleware/auth.js"),
+  aiRateLimiter: aiWorkspaceSupport.createWorkspaceLimiter(), features: require("./aiWorkspaceFeatures.json"),
+}));
 app.use(/^\/api\/(?:cf-|gap-)/,authenticate,(q,s)=>s.status(503).json({error:'Generated feature route is quarantined pending validated implementation'}));
 app.use('/api/cf-autonomous-budget-agent', require('./routes/customFeat01_AutonomousBudgetAgent'));
 app.use('/api/cf-subscription-analyzer', require('./routes/customFeat02_SubscriptionAnalyzer'));
