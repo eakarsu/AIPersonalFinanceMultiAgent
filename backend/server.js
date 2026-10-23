@@ -57,6 +57,7 @@ app.use('/api/custom-views', require('./routes/customViews'));
 // Health
 app.get('/api/health',(q,s)=>s.json({status:'ok',ts:Date.now()}));
 
+app.use('/api/feature-pack', authenticate, require('./routes/featurePack41b'));
 // 404 catch-all (must be after all other routes)
 app.use('/api/*',(q,s)=>s.status(404).json({error:'Not found',path:q.originalUrl}));
 

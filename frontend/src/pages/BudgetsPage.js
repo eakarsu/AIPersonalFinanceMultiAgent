@@ -1,9 +1,9 @@
-import React,{useState,useEffect}from'react';import api from'../services/api';import Modal from'../components/Modal';
+import React,{useState,useEffect}from'react';import api from'../services/api';import Modal from'../components/Modal';import DetailPanel from'../components/DetailPanel';
 
 export default function BudgetsPage(){
   const[items,setItems]=useState([]);
   const[actuals,setActuals]=useState([]);
-  const[modal,setModal]=useState(false);
+  const[modal,setModal]=useState(false);const[sel,setSel]=useState(null);
   const[tab,setTab]=useState('actuals');
   const[form,setForm]=useState({category:'',monthly_limit:''});
 
@@ -48,7 +48,7 @@ export default function BudgetsPage(){
           {displayItems.map(b=>{
             const p=pct(b);const c=color(p);const spent=+b.spent||0;const limit=+b.monthly_limit||0;const remaining=+b.remaining||(limit-spent);
             return(
-              <div key={b.id} style={{background:'#1a1a2e',borderRadius:12,padding:20,border:'1px solid #0f3460'}}>
+              <div key={b.id} onClick={()=>setSel(b)} style={{background:'#1a1a2e',borderRadius:12,padding:20,border:'1px solid #0f3460',cursor:'pointer'}}>
                 <div style={{display:'flex',justifyContent:'space-between',marginBottom:12}}>
                   <div style={{fontSize:16,fontWeight:'bold',color:'#e0e0e0'}}>{b.category}</div>
                   <span style={{color:c,fontWeight:'bold',fontSize:18}}>{p}%</span>
@@ -85,7 +85,7 @@ export default function BudgetsPage(){
           <input style={inp} type="number" value={form.monthly_limit} onChange={e=>setForm({...form,monthly_limit:e.target.value})} required placeholder="500"/>
           <button style={{width:'100%',padding:12,background:'#e94560',color:'#fff',border:'none',borderRadius:8,cursor:'pointer',fontWeight:'bold'}} type="submit">Add Budget</button>
         </form>
-      </Modal>
+      </Modal><DetailPanel isOpen={!!sel} onClose={()=>setSel(null)} title="Budget Details" onEdit={()=>{setForm({category:sel.category,monthly_limit:sel.monthly_limit});setSel(null);setModal(true);}} onDelete={()=>{setItems(items.filter(x=>x.id!==sel.id));setActuals(actuals.filter(x=>x.id!==sel.id));setSel(null);}}>{sel&&<div><div style={{marginBottom:12}}><div style={{color:'#a0a0b0',fontSize:12}}>Category</div><div style={{color:'#e0e0e0',fontSize:15,fontWeight:'bold'}}>{sel.category}</div></div><div style={{marginBottom:12}}><div style={{color:'#a0a0b0',fontSize:12}}>Monthly Limit</div><div style={{color:'#e0e0e0',fontSize:15}}>${Number(sel.monthly_limit||0).toFixed(2)}</div></div><div style={{marginBottom:12}}><div style={{color:'#a0a0b0',fontSize:12}}>Spent</div><div style={{color:'#e0e0e0',fontSize:15}}>${Number(sel.spent||0).toFixed(2)}</div></div></div>}</DetailPanel>
     </div>
   );
 }

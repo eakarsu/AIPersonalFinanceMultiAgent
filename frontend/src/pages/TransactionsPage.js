@@ -83,7 +83,7 @@ export default function TransactionsPage(){
         </div>
       )}
 
-      <DetailPanel isOpen={!!sel} onClose={()=>setSel(null)} title="Transaction Details">
+      <DetailPanel isOpen={!!sel} onClose={()=>setSel(null)} title="Transaction Details" onDelete={async()=>{await api.deleteTransaction(sel.id);setSel(null);load(page,cat);}}>
         {sel&&(
           <>
             {[['Merchant',sel.merchant],['Category',sel.category],['Amount',`$${Number(sel.amount).toFixed(2)}`],['Date',new Date(sel.date).toLocaleDateString()],['Account',sel.account_name],['Description',sel.description]].map(([l,v])=>(
@@ -92,7 +92,7 @@ export default function TransactionsPage(){
                 <div style={{color:'#e0e0e0',fontSize:14}}>{v||'-'}</div>
               </div>
             ))}
-            <button style={{width:'100%',padding:10,background:'#e94560',color:'#fff',border:'none',borderRadius:8,cursor:'pointer',fontWeight:'bold'}} onClick={async()=>{await api.deleteTransaction(sel.id);setSel(null);load(page,cat);}}>Delete Transaction</button>
+            
           </>
         )}
       </DetailPanel>
